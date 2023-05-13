@@ -1,0 +1,234 @@
+\documentclass[11pt, letterpaper]{article}
+\usepackage[top=.75in, bottom=.75in, left=.75in, right=.75in]{geometry}
+
+%% For footers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+%% Measure width of words with \widthof
+\usepackage{calc}
+%% Use for loop in commands
+\usepackage{pgffor}
+%% Add e.g. if commands
+\usepackage{etoolbox}
+%% Add colors
+\usepackage{xcolor}
+%% Adds conditional for \newcommand
+\usepackage{xstring}
+%% Adds addmargin environment
+\usepackage{scrextend}
+%% Allows for hyperlink
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+}
+%% For 2 columns used in Talks
+\usepackage{vwcol}
+\setlength{\columnsep}{0.06\textwidth}
+
+%% Uncomment to remove page numbering
+% \pagenumbering{gobble}
+%% Footer stuff
+% Remove header horizontal bar
+\renewcommand{\headrulewidth}{0pt}
+% Customize footer
+\fancyfoot[L]{F. Last | \textit{Curriculum Vitae}}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+
+% %% Format headers using titlesec
+\usepackage{titlesec}
+\titleformat*{\section}{\LARGE\bfseries}
+\titlespacing*{\section}{0mm}{11mm}{2mm}
+
+%% Different link colors
+\newcommand{\hrefGithub}[2]{\href{#1}{\color{black}#2}}
+\newcommand{\hrefTalk}[2]{\href{#1}{\color{red}#2}}
+\newcommand{\hrefTitle}[2]{\href{#1}{\color{blue!70!black}#2}}
+
+%%% TEMPLATES %%%
+%-----------------------------------------------------------------%
+
+%%| SECTION HEADER |%%
+\newcommand{\sectionName}[1]{
+	\section*{\color{red!20!black}#1\ \rule[4px]{\textwidth - \widthof{#1} - \columnsep}{1px}}
+}
+
+%-----------------------------------------------------------------%
+
+%%| GENERAL |%%
+\newenvironment{itemizeSquish}
+{\begin{itemize}
+	\setlength{\itemsep}{0pt}
+	\setlength{\parskip}{0pt}}
+{\end{itemize}\vspace{5pt}}
+
+%-----------------------------------------------------------------%
+
+%%| HEADER |%%
+\newcommand{\header}[5]{
+	{
+		\begin{tabular}[c]{l}\Huge
+			\bfseries\uppercase{#1}
+		\end{tabular}
+	}\hfill{
+		\begin{tabular}[c]{r}\small
+			#2 $\bullet$ #3\\
+			#4 $\bullet$ \hrefGithub{http://#5}{#5}
+		\end{tabular}
+	}\\
+}
+
+%-----------------------------------------------------------------%
+
+%%| EDUCATION |%%
+\newcommand{\education}[6]{
+	\item\textbf{#1} \hfill \textbf{#2} \\ \emph{#3} \hfill #4 --- #5
+
+	\begin{addmargin}[2em]{1em}
+	#6
+	\end{addmargin}
+	\vspace{3mm}
+}
+
+%-----------------------------------------------------------------%
+
+%%| WORK EXPERIENCE |%%
+\newcommand{\work}[7]{
+    \IfEqCase{#1}{
+    	{title}{\item\textbf{#2} \hfill \textbf{#3} 
+
+    	\emph{#4} \hfill #5 --- #6
+		\begin{addmargin}[0.5em]{1em}
+			\internalList{#7}
+		\end{addmargin}
+		}
+    	{notitle}{\item[]\emph{#4} \hfill #5 --- #6
+		\begin{addmargin}[0.5em]{1em}
+			\internalList{#7}
+		\end{addmargin}
+		}
+    }
+}
+\NewDocumentCommand{\internalList}{>{\SplitList{&&}} m}{
+	\begin{eduItemizeSquish}
+  	\ProcessList{#1}{\itemSinglet}
+  	\end{eduItemizeSquish}
+}
+\newcommand{\itemSinglet}[1]{
+  	\item[--]{#1}
+}
+\newenvironment{eduItemizeSquish}
+{\begin{itemize}
+	\setlength{\itemsep}{0pt}
+	\setlength{\parskip}{0pt}}
+{\end{itemize}}
+
+%-----------------------------------------------------------------%
+
+%%| TECHNICAL SKILLS |%%
+\newcommand{\techSkills}[2]{\item \textbf{#1: }{#2}}
+
+%-----------------------------------------------------------------%
+
+%%| TALKS |%%
+\newcommand{\talk}[5][0.5]{
+	\item \begin{minipage}{#1\textwidth}
+		\emph{#2}
+	\end{minipage}\begin{minipage}{\textwidth - #1\textwidth - \columnsep}
+		\raggedleft{\textbf{\hrefTalk{#4}{#3}}}\\ \raggedleft{#5}
+	\end{minipage}
+}
+
+%-----------------------------------------------------------------%
+
+%%| TEACHING EXPERIENCE |%%
+\newcommand{\teaching}[4]{
+	\item\textbf{#1 (#2)}: \emph{#3}
+	\foreach \char/\pos in {#4} {
+		\hfill\raggedleft{\char} \\
+	}
+}
+
+%-----------------------------------------------------------------%
+
+%%| ORGANIZATIONS & SERVICES |%%
+
+\newcommand{\organization}[5]{
+	\def\enddate{#4}
+	\item\textbf{#1} \emph{#2}  \hfill #3 \ifdefempty{\enddate}{}{-- #4}
+	\begin{itemize}
+		\foreach \char/\pos in {#5} {
+			\item[--] \char
+		}
+	\end{itemize}
+}
+
+%-----------------------------------------------------------------%
+
+%%| ONGOING PROJECTS |%%
+
+\newcommand{\ongoingproject}[3]{
+	\item\textbf{#1}\\
+	Collaborators: \textit{#2}
+	\begin{itemize}
+		\item[--] #3
+	\end{itemize}
+}
+
+%-----------------------------------------------------------------%
+
+%%| TECHNICAL SKILLS |%%
+\newcommand{\technicalskill}[2]{
+	\item\textbf{#1}: #2
+}
+
+%-----------------------------------------------------------------%
+
+
+\begin{document}
+% Don't add http:// to the personal site, it is added in the command
+\header{First Last}{University of School}{Town, ST}{first.last@uos.edu}{github.com/crumpstrr33}
+
+\sectionName{Education}
+\begin{itemize}
+    \education{University of School}{Village, ST}{Ph.D.}{1912}{Present}{What I'm doing}
+    \education{University of College}{Village, ST}{B.Sc.}{1900}{1911}{Write info about this here}
+\end{itemize}
+
+\sectionName{Ongoing Projects}
+\begin{itemize}
+    \ongoingproject{Title of project}{Collab One, Collab Two, ...}{Longer description of the project.}
+\end{itemize}
+
+\sectionName{Teaching Experience}
+\begin{itemizeSquish}
+    \teaching{Teaching Assistant}{University of College}{CLSS 101}{Spring 1900, Fall 1900, Spring 1911}
+    \teaching{Teaching Assistant}{University of College}{LEARN 211}{Fall 1912, Spring 1913}
+\end{itemizeSquish}
+
+\sectionName{Work Experience}
+\begin{itemize}
+    \work{title}{Place of Work}{Ville, ST}{Job Title}{Start}{End}{Description of work. && Use \&\& to split between bullet points.}
+
+    \work{notitle}{}{Menlo Park, CA}{President}{Start}{End}{Use 'notitle' for the first argument to not have a title like so. && Otherwise use 'title'.}
+\end{itemize}
+
+\sectionName{Talks}
+\begin{itemize}
+    \talk[0.5]{Talk Title}{Host of Talk/Conference}{https://youtu.be/dQw4w9WgXcQ}{July 1987}
+    \talk[0.5]{This Title Will Wrap Based on Optional Argument of How Wide to Make Column}{That Other Symposium}{https://youtu.be/0jXTBAGv9ZQ}{August 1215}
+\end{itemize}
+
+\sectionName{Organization \& Services}
+\begin{itemize}
+    \organization{Name of Organization}{Your Title}{Start}{End}{Description of your role.}
+    \organization{Other Group}{Volunteer}{Month}{}{If end date is not specified then it will show as a one-time thing as such.}
+\end{itemize}
+
+\sectionName{Technical Skills}
+\begin{itemizeSquish}
+    \technicalskill{Group}{Description}
+\end{itemizeSquish}
+
+\end{document}
