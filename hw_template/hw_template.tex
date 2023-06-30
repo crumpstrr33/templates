@@ -1,0 +1,167 @@
+\documentclass[11pt]{article}
+% add optional 'showframe' to show where margins are
+\usepackage[margin=1in, left=0.75in, right=0.75in]{geometry}
+
+% Text package for boldface small caps
+\usepackage{bold-extra}
+% Use in preamble environment
+\usepackage{changepage}
+\usepackage{calc}
+\usepackage{etoolbox}
+\usepackage{fancyhdr}
+\usepackage{pgffor}
+\usepackage{tcolorbox}
+\usepackage{xcolor}
+\usepackage{xfp}
+\usepackage{xparse}
+% Packages for homework
+\usepackage{amsmath}
+\usepackage{cancel}
+\usepackage{physics}
+\usepackage{siunitx}
+% allow use of \qty by siunitx, not physics
+\AtBeginDocument{\RenewCommandCopy\qty\SI}
+
+% Customize footer (it is set in hwTitle command)
+\pagestyle{fancy}
+\setlength\headheight{14pt}
+% Remove header horizontal bar
+\renewcommand{\headrulewidth}{0pt}
+
+% counts the depth that we're currently on
+\newcounter{counter}
+% counters for each depth (total of 3)
+\newcounter{counter1}
+\newcounter{counter2}[counter1]
+\newcounter{counter3}[counter2]
+
+% Symbols to use for each depth
+% e.g. Roman == I, II, III | roman == i, ii, iii
+%      Alph  == A,  B,  C  | alph  == a,  b,  c
+%     arabic == 1,  2,  3
+% Also fnsymbol: https://www.overleaf.com/learn/latex/Counters#\fnsymbol{somecounter}
+\csdef{symbol1}{\Roman}
+\csdef{symbol2}{\Alph}
+\csdef{symbol3}{\arabic}
+% Title name: e.g. question, problem, part, etc.
+\csdef{title1}{Question}
+\csdef{title2}{Part}
+\csdef{title3}{Section}
+
+
+\newenvironment{question}[1][]{
+    % indentation for the environment
+    \begin{adjustwidth}{\inteval{3*\value{counter}}em}{}
+
+    % \counter is how deep in we are
+    \stepcounter{counter}
+    \def\counter{counter\the\numexpr\value{counter}}
+    % increase by one because we start at counter1, then counter2, etc
+    % where e.g. counter1 is the counter for the first depth
+    \stepcounter{\counter}
+    % which symbol type do we use, e.g. 1, A, a, i and so on
+    \def\symbol{symbol\the\numexpr\value{counter}}
+    
+    \ifstrempty{#1}{
+        \def\questionTitle{\csuse{title\arabic{counter}} \csuse{\symbol}{\counter}}
+    }{
+        % Allow for custom choice of question title
+        \def\questionTitle{#1}
+    }
+
+    % padding above title
+    \vspace{2em}
+    % title itself
+    \begin{tcolorbox}[colback=brown!\inteval{70 - 20*\value{counter}}!white, coltitle=black]
+        \underline{\begin{huge}\textbf{\textsc{\questionTitle}}\end{huge}}
+    \end{tcolorbox}
+    \vspace{3mm}\par
+    \noindent
+}{
+    \end{adjustwidth}
+    \addtocounter{counter}{-1}
+    \par
+}
+
+% reset the counters
+\newcommand\resetCounters{
+    \foreach\index in {1, ..., 6} {
+        \ifcsname c@counter\index\endcsname
+            \setcounter{counter\index}{0}
+        \else\fi
+    }
+}
+
+% Title for the homework with arguments: homework_title, name, date
+\newcommand\hwtitle[3]{
+    % Set footer in this command to grab the title and author
+    \fancyfoot[L]{\footnotesize\textsc{#1 | #2}}
+    \fancyfoot[C]{}
+    \fancyfoot[R]{\footnotesize\thepage}
+    \vspace{3em}
+    \begin{center}
+        \huge\textbf{#1}\vspace{0.8em}\par
+        \Large #2\vspace{1em}\par
+        #3\vspace{1.2em}
+        \hspace*{\fill}\textcolor{black!20!white}{\rule[3px]{\textwidth}{3px}}\vspace{-1em}
+    \end{center}
+}
+
+% Labeling question from the book
+\NewDocumentCommand\book{mg}{
+    \vspace{-4.9em}
+    \begin{adjustwidth}{}{1em}
+        \begin{flushright}
+            \footnotesize(\textit{From }\IfNoValueTF{#2}{\textit{the book}}{`#2'}\textit{, \textbf{question #1}})    
+        \end{flushright}
+    \end{adjustwidth}   
+    \par\vspace{2.5em}\noindent
+}
+% 'and' for inbetween two equations in align environment or $$
+\newcommand\andeqs[1][and]{\qquad\text{#1}\qquad}
+
+
+\begin{document}
+\hwtitle{Homework $N$}{First Last}{April 1, 2023}
+
+\begin{question}
+    Use the \verb|question| environment for the questions.
+    
+    \begin{question}
+        They can be nested. By default, it's up to three levels, but that can be increased by adding more counters, symbols and titles shown in the preamble.
+    \end{question}
+    \begin{question}
+        The questions will automatically update their numbering/lettering. This choice can also be changed via the symbols in the preamble.
+        \begin{question}
+            One subsubquestion
+        \end{question}
+        \begin{question}
+            And another
+        \end{question}
+    \end{question}
+\end{question}
+
+\begin{question}
+    The values for the numberings/letterings will reset properly so no need to deal with that.
+\end{question}
+
+\begin{question}
+    \book{13.37}{Super Good Book}
+    Use the command \verb|\book| to reference a specific problem in a book.
+\end{question}
+
+\begin{question}[Custom Question 1]
+    Use the optional argument to specify the name of the question.
+    \begin{question}
+        The counting/lettering will not be interrupted by custom question titles.
+    \end{question}
+    \begin{question}[Custom Part - $\int_a^bf(x)\dd{x}$]
+        Any question can be customized.
+    \end{question}
+\end{question}
+
+\resetCounters
+\begin{question}
+    The counters can be reset to 1 at any point with the command \verb|\resetCounters|.
+\end{question}
+\end{document}
