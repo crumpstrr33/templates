@@ -11,6 +11,7 @@
 \usepackage{fancyhdr}
 \usepackage{pgffor}
 \usepackage{tcolorbox}
+\tcbuselibrary{skins}
 \usepackage{xcolor}
 \usepackage{xfp}
 \usepackage{xparse}
@@ -75,7 +76,6 @@
     \begin{tcolorbox}[colback=brown!\inteval{70 - 20*\value{counter}}!white, coltitle=black]
         \underline{\begin{huge}\textbf{\textsc{\questionTitle}}\end{huge}}
     \end{tcolorbox}
-    \vspace{3mm}\par
     \noindent
 }{
     \end{adjustwidth}
@@ -108,17 +108,30 @@
 }
 
 % Labeling question from the book
-\NewDocumentCommand\book{mg}{
-    \vspace{-4.9em}
+\NewDocumentCommand\book{O{}mg}{
+    \vspace{-4.1em}
     \begin{adjustwidth}{}{1em}
         \begin{flushright}
-            \footnotesize(\textit{From }\IfNoValueTF{#2}{\textit{the book}}{`#2'}\textit{, \textbf{question #1}})    
+            \footnotesize(\textit{From }\IfNoValueTF{#3}{
+                    \textit{the book}
+                }{#1#3#1}\textit{, \textbf{question #2}})    
         \end{flushright}
     \end{adjustwidth}   
     \par\vspace{2.5em}\noindent
 }
 % 'and' for inbetween two equations in align environment or $$
 \newcommand\andeqs[1][and]{\qquad\text{#1}\qquad}
+
+% space for tensor indices
+\newcommand\none{\phantom{\mu}}
+
+\newcommand\questiontext[1]{
+    \begin{adjustwidth}{0.8in}{0.8in}
+        \begin{tcolorbox}[empty, borderline south={1pt}{0pt}{black!30!white}]
+            \small#1
+        \end{tcolorbox}
+    \end{adjustwidth}
+}
 
 
 \begin{document}
@@ -137,11 +150,16 @@
         \end{question}
         \begin{question}
             And another
+            
+            \begin{align}
+                \nabla F=0
+            \end{align}
         \end{question}
     \end{question}
 \end{question}
 
 \begin{question}
+    \questiontext{Use \texttt{\char`\\ questiontext} to write out the question itself in this format. It uses a tcolorbox to create the spacing/border.}
     The values for the numberings/letterings will reset properly so no need to deal with that.
 \end{question}
 
