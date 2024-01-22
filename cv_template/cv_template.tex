@@ -32,7 +32,7 @@
 % Remove header horizontal bar
 \renewcommand{\headrulewidth}{0pt}
 % Customize footer
-\fancyfoot[L]{F. Last | \textit{Curriculum Vitae}}
+\fancyfoot[L]{J. Scott | \textit{Curriculum Vitae}}
 \fancyfoot[C]{}
 \fancyfoot[R]{\thepage}
 
@@ -41,17 +41,26 @@
 \titleformat*{\section}{\LARGE\bfseries}
 \titlespacing*{\section}{0mm}{11mm}{2mm}
 
-%% Different link colors
-\newcommand{\hrefGithub}[2]{\href{#1}{\color{black}#2}}
-\newcommand{\hrefTalk}[2]{\href{#1}{\color{red}#2}}
-\newcommand{\hrefTitle}[2]{\href{#1}{\color{blue!70!black}#2}}
+%% Different colors
+\definecolor{section}{RGB}{10, 10, 50}
+\definecolor{github}{RGB}{0, 0, 0}
+\definecolor{talk}{RGB}{240, 23, 10}
+\definecolor{title}{RGB}{26, 143, 227}
+\definecolor{arxiv}{RGB}{100, 150, 0}
+
+%% Clickable links with said colors
+\newcommand{\hrefGithub}[2]{\href{#1}{\color{github}#2}}
+\newcommand{\hrefTalk}[2]{\href{#1}{\color{talk}#2}}
+\newcommand{\hrefTitle}[2]{\href{#1}{\color{title}#2}}
+\newcommand{\hrefarXiv}[2]{\href{#1}{\color{arxiv}#2}}
+
 
 %%% TEMPLATES %%%
 %-----------------------------------------------------------------%
 
 %%| SECTION HEADER |%%
-\newcommand{\sectionName}[1]{
-	\section*{\color{red!20!black}#1\ \rule[4px]{\textwidth - \widthof{#1} - \columnsep}{1px}}
+\NewDocumentCommand{\sectionName}{m}{
+	\section*{\color{section}#1\ \rule[4px]{\textwidth - \widthof{#1} - \columnsep}{1px}}
 }
 
 %-----------------------------------------------------------------%
@@ -66,7 +75,7 @@
 %-----------------------------------------------------------------%
 
 %%| HEADER |%%
-\newcommand{\header}[5]{
+\NewDocumentCommand{\header}{mmmmm}{
 	{
 		\begin{tabular}[c]{l}\Huge
 			\bfseries\uppercase{#1}
@@ -82,7 +91,7 @@
 %-----------------------------------------------------------------%
 
 %%| EDUCATION |%%
-\newcommand{\education}[6]{
+\NewDocumentCommand{\education}{mmmmmm}{
 	\item\textbf{#1} \hfill \textbf{#2} \\ \emph{#3} \hfill #4 --- #5
 
 	\begin{addmargin}[2em]{1em}
@@ -94,7 +103,7 @@
 %-----------------------------------------------------------------%
 
 %%| WORK EXPERIENCE |%%
-\newcommand{\work}[7]{
+\NewDocumentCommand{\work}{O{title}mmmmmm}{
     \IfEqCase{#1}{
     	{title}{\item\textbf{#2} \hfill \textbf{#3} 
 
@@ -127,12 +136,14 @@
 %-----------------------------------------------------------------%
 
 %%| TECHNICAL SKILLS |%%
-\newcommand{\techSkills}[2]{\item \textbf{#1: }{#2}}
+\NewDocumentCommand{\techSkills}{mm}{
+	\textbf{#1: }#2
+}
 
 %-----------------------------------------------------------------%
 
 %%| TALKS |%%
-\newcommand{\talk}[5][0.5]{
+\NewDocumentCommand{\talk}{O{0.75}mmmm}{
 	\item \begin{minipage}{#1\textwidth}
 		\emph{#2}
 	\end{minipage}\begin{minipage}{\textwidth - #1\textwidth - \columnsep}
@@ -143,9 +154,10 @@
 %-----------------------------------------------------------------%
 
 %%| TEACHING EXPERIENCE |%%
-\newcommand{\teaching}[4]{
-	\item\textbf{#1 (#2)}: \emph{#3}
-	\foreach \char/\pos in {#4} {
+% \newcommand{\teaching}[3]{
+\NewDocumentCommand{\teaching}{mmm}{
+	\item\textbf{#1}: \emph{#2}
+	\foreach \char/\pos in {#3} {
 		\hfill\raggedleft{\char} \\
 	}
 }
@@ -153,8 +165,7 @@
 %-----------------------------------------------------------------%
 
 %%| ORGANIZATIONS & SERVICES |%%
-
-\newcommand{\organization}[5]{
+\NewDocumentCommand{\organization}{mmmmm}{
 	\def\enddate{#4}
 	\item\textbf{#1} \emph{#2}  \hfill #3 \ifdefempty{\enddate}{}{-- #4}
 	\begin{itemize}
@@ -167,24 +178,22 @@
 %-----------------------------------------------------------------%
 
 %%| ONGOING PROJECTS |%%
-
-\newcommand{\ongoingproject}[3]{
-	\item\textbf{#1}\\
-	Collaborators: \textit{#2}
+\NewDocumentCommand{\ongoingproject}{ommm}{
+	\item\textbf{#2}\hspace{3mm}\IfNoValueF{#1}{{\small\hrefarXiv{https://arxiv.org/abs/#1}{\textsc{[arXiv]}}}}\\
+	Collaborators: \textit{#3}
 	\begin{itemize}
-		\item[--] #3
+		\item[--] #4
 	\end{itemize}
 }
 
 %-----------------------------------------------------------------%
 
 %%| TECHNICAL SKILLS |%%
-\newcommand{\technicalskill}[2]{
+\NewDocumentCommand{\technicalskill}{mm}{
 	\item\textbf{#1}: #2
 }
 
 %-----------------------------------------------------------------%
-
 
 \begin{document}
 % Don't add http:// to the personal site, it is added in the command
@@ -199,6 +208,7 @@
 \sectionName{Ongoing Projects}
 \begin{itemize}
     \ongoingproject{Title of project}{Collab One, Collab Two, ...}{Longer description of the project.}
+    \ongoingproject[2303.17059]{Awesome Paper}{Firsty McLast, Wo McMan}{Pass an arXiv number, i.e. xxxx.xxxxx, as the optional argument, and the hyperlink will appear next to the title as shown.}
 \end{itemize}
 
 \sectionName{Teaching Experience}
@@ -209,9 +219,9 @@
 
 \sectionName{Work Experience}
 \begin{itemize}
-    \work{title}{Place of Work}{Ville, ST}{Job Title}{Start}{End}{Description of work. && Use \&\& to split between bullet points.}
+    \work{Place of Work}{Ville, ST}{Job Title}{Start}{End}{Description of work. && Use \&\& to split between bullet points.}
 
-    \work{notitle}{}{Menlo Park, CA}{President}{Start}{End}{Use 'notitle' for the first argument to not have a title like so. && Otherwise use 'title'.}
+    \work[notitle]{}{Menlo Park, CA}{President}{Start}{End}{Use `notitle' for the first argument to not have a title like so. && Default is `title'.} 
 \end{itemize}
 
 \sectionName{Talks}
