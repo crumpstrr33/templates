@@ -11,3 +11,5 @@ _minted-beamer
 *.vrb
 *.blg
 *.bbl
+*.fls
+*.fdb_latexmk
